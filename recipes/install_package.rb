@@ -21,7 +21,11 @@ version_string = node['platform_family'] == 'rhel' ? "#{node['filebeat']['versio
 
 case node['platform_family']
 when 'debian'
-  package 'apt-transport-https'
+  begin
+    resources('package[apt-transport-https]')
+  rescue Chef::Exceptions::ResourceNotFound
+    package 'apt-transport-https'
+  end
 
   # apt repository configuration
   apt_repository 'beats' do
